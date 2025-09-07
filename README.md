@@ -80,14 +80,14 @@ asyncio.run(main())
 
 | Backend | Speed | Cost | AI Intelligence | Best For |
 |---------|-------|------|----------------|----------|
-| **Firecrawl** | ⚡ Fast | API costs | Medium | Production scraping |
-| **Crawl4AI** | 🐌 Medium | Free | Medium | Development & testing |
-| **Scrapy** | 🚀 Fastest | Free | Low | Simple HTML extraction |
-| **Browser-Use** | 🧠 Slower | AI costs | **High** | Complex dynamic sites |
+| **Firecrawl** | Fast | API costs | Medium | Production scraping |
+| **Crawl4AI** | Medium | Free | Medium | Development & testing |
+| **Scrapy** | Fastest | Free | Low | Simple HTML extraction |
+| **Browser-Use** | Slower | AI costs | High | Complex dynamic sites |
 
 ## Future Enhancements
 
-### 🔄 Recursive Crawling (Planned)
+### Recursive Crawling (Planned)
 ```python
 # Future API - configurable depth and page limits
 config = CrawlConfig(
@@ -102,7 +102,7 @@ result = await backend.crawl_recursive("https://example.com", format="markdown")
 print(f"Crawled {len(result.pages)} pages across {result.max_depth_reached} levels")
 ```
 
-### 🚀 Additional Crawler Backends (Roadmap)
+### Additional Crawler Backends (Roadmap)
 
 #### High Priority
 - **[Playwright](https://github.com/microsoft/playwright-python)** - Fast browser automation, excellent for SPAs
@@ -124,18 +124,18 @@ print(f"Crawled {len(result.pages)} pages across {result.max_depth_reached} leve
 - **[Bright Data](https://brightdata.com/)** - Proxy + scraping platform  
 - **[Zyte](https://www.zyte.com/)** - Enterprise web data platform
 
-### 🛠️ Advanced Features (Future Versions)
-- **Multi-page crawling** with link discovery
-- **Batch processing** for multiple URLs
-- **CLI tool** (`crawlstudio crawl <url>`)
-- **Content deduplication** and similarity detection
-- **Rate limiting** and respectful crawling policies
-- **Caching system** with Redis/disk storage
-- **Webhook integrations** for real-time notifications
-- **GraphQL API** for programmatic access
-- **Docker containerization** for easy deployment
+### Advanced Features (Future Versions)
+- Multi-page crawling with link discovery
+- Batch processing for multiple URLs
+- CLI tool (`crawlstudio crawl <url>`)
+- Content deduplication and similarity detection
+- Rate limiting and respectful crawling policies
+- Caching system with Redis/disk storage
+- Webhook integrations for real-time notifications
+- GraphQL API for programmatic access
+- Docker containerization for easy deployment
 
-### 🎯 10K GitHub Stars Roadmap
+### Development Roadmap
 1. **Core Features** (Current): 4 working backends
 2. **Recursive Crawling**: Depth-based multi-page crawling  
 3. **CLI Tool**: `pip install crawlstudio` → command line usage
