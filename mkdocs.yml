@@ -1,0 +1,41 @@
+site_name: CrawlStudio Documentation
+site_description: Unified Python library for web crawling tools
+site_url: https://github.com/saeedashraf/CrawlStudio
+repo_url: https://github.com/saeedashraf/CrawlStudio
+repo_name: saeedashraf/CrawlStudio
+
+theme:
+  name: material
+  palette:
+    primary: deep purple
+    accent: purple
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+            docstring_style: google
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - API Reference:
+    - Models: api/models.md
+    - Backends: api/backends.md
+    - Utilities: api/utils.md
+  - Examples: examples.md
+  - Contributing: CONTRIBUTING.md
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - admonition
+  - codehilite
