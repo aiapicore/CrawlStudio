@@ -1,18 +1,18 @@
-# CrawlStudio
+# 🕷️ CrawlStudio
 
 Unified wrapper for web crawling tools, inspired by modular, community-driven design.
 
-## Vision
+## 🎯 Vision
 
 CrawlStudio provides a unified Python API for various web crawling backends including Firecrawl, Crawl4AI, Scrapy, and Browser-Use (AI-driven). It emphasizes modularity, ease of use, and intelligent extraction capabilities.
 
-## Installation
+## 📦 Installation
 
 ```bash
 pip install crawlstudio
 ```
 
-## Usage Examples
+## 🚀 Usage Examples
 
 ### Firecrawl Example
 
@@ -76,7 +76,7 @@ asyncio.run(main())
 
 > **Note**: Browser-Use backend requires `pip install browser-use` and an AI API key (OpenAI or Anthropic). See [BROWSER_USE_SETUP.md](BROWSER_USE_SETUP.md) for details.
 
-## Backend Comparison
+## ⚡ Backend Comparison
 
 | Backend | Speed | Cost | AI Intelligence | Best For |
 |---------|-------|------|----------------|----------|
@@ -85,7 +85,7 @@ asyncio.run(main())
 | **Scrapy** | Fastest | Free | Low | Simple HTML extraction |
 | **Browser-Use** | Slower | AI costs | High | Complex dynamic sites |
 
-## Future Enhancements
+## 🔮 Future Enhancements
 
 ### Recursive Crawling (Planned)
 ```python
