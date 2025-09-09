@@ -12,7 +12,7 @@ authors = [
 description = "Unified Python library for web crawling tools - supports Firecrawl, Crawl4AI, Scrapy, and Browser-Use backends"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",

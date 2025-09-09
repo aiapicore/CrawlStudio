@@ -3,6 +3,7 @@ Comprehensive tests for Firecrawl backend
 """
 import asyncio
 import pytest
+import time
 from dotenv import load_dotenv
 from crawlstudio import CrawlConfig, FirecrawlBackend
 from crawlstudio.exceptions import ConfigurationError, BackendExecutionError
@@ -17,6 +18,12 @@ class TestFirecrawlBackend:
         """Create Firecrawl backend instance"""
         config = CrawlConfig()
         return FirecrawlBackend(config)
+
+    @pytest.fixture(autouse=True)
+    def rate_limit_sleep(self):
+        """Add delay between tests to avoid rate limiting"""
+        yield
+        time.sleep(5)  # 5 second delay between tests
 
     @pytest.mark.asyncio
     async def test_basic_markdown_crawling(self, backend):
