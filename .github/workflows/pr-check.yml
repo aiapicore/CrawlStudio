@@ -24,8 +24,13 @@ jobs:
           pip install -e .
           pip install pytest pytest-asyncio black flake8 playwright
 
+      - name: Install Playwright (Python)
+        run: |
+          pip install playwright
       - name: Install Playwright browsers (Chromium)
-        run: python -m playwright install chromium
+        run: |
+          python -m playwright install chromium --with-deps
+          python -m playwright install-deps chromium
 
       - name: Check code formatting
         run: black --check crawlstudio/
