@@ -21,10 +21,10 @@ class TestFirecrawlBackend:
     @pytest.mark.asyncio
     async def test_basic_markdown_crawling(self, backend):
         """Test basic markdown extraction"""
-        result = await backend.crawl("https://httpbin.org/html", format="markdown")
+        result = await backend.crawl("https://example.com", format="markdown")
 
         assert result.backend_used == "firecrawl"
-        assert result.url == "https://httpbin.org/html"
+        assert result.url == "https://example.com"
         assert result.markdown is not None
         assert len(result.markdown) > 0
         assert result.execution_time > 0
@@ -32,7 +32,7 @@ class TestFirecrawlBackend:
     @pytest.mark.asyncio
     async def test_html_extraction(self, backend):
         """Test HTML extraction"""
-        result = await backend.crawl("https://httpbin.org/html", format="html")
+        result = await backend.crawl("https://example.com", format="html")
 
         assert result.backend_used == "firecrawl"
         assert result.raw_html is not None
@@ -41,7 +41,7 @@ class TestFirecrawlBackend:
     @pytest.mark.asyncio
     async def test_structured_extraction(self, backend):
         """Test structured data extraction"""
-        result = await backend.crawl("https://httpbin.org/html", format="structured")
+        result = await backend.crawl("https://example.com", format="structured")
 
         assert result.backend_used == "firecrawl"
         assert result.structured_data is not None
@@ -57,7 +57,7 @@ class TestFirecrawlBackend:
         backend = FirecrawlBackend(config)
 
         with pytest.raises(ConfigurationError, match="FIRECRAWL_API_KEY is required"):
-            await backend.crawl("https://httpbin.org/html", format="markdown")
+            await backend.crawl("https://example.com", format="markdown")
 
     @pytest.mark.asyncio
     async def test_error_handling_invalid_url(self, backend):
@@ -68,10 +68,13 @@ class TestFirecrawlBackend:
     @pytest.mark.asyncio
     async def test_caching_detection(self, backend):
         """Test cache hit detection"""
-        url = "https://httpbin.org/html"
+        url = "https://example.com"
 
         # First request
         result1 = await backend.crawl(url, format="markdown")
+
+        # Wait for rate limit to reset
+        await asyncio.sleep(40)  # Wait 40 seconds for rate limit to reset
 
         # Second request should potentially be cached
         result2 = await backend.crawl(url, format="markdown")
@@ -94,7 +97,7 @@ async def run_manual_tests():
         return
 
     backend = FirecrawlBackend(config)
-    test_url = "https://httpbin.org/html"
+    test_url = "https://example.com"
 
     # Test 1: Markdown format
     print("\n1. Testing MARKDOWN format...")

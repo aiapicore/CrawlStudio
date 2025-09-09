@@ -18,10 +18,10 @@ class TestScrapyBackend:
     @pytest.mark.asyncio
     async def test_basic_crawling(self, backend):
         """Test basic HTML extraction with Scrapy"""
-        result = await backend.crawl("https://httpbin.org/html", format="html")
+        result = await backend.crawl("https://example.com", format="html")
 
         assert result.backend_used == "scrapy"
-        assert result.url == "https://httpbin.org/html"
+        assert result.url == "https://example.com"
         assert result.raw_html is not None
         assert len(result.raw_html) > 0
         assert result.execution_time > 0
@@ -29,7 +29,7 @@ class TestScrapyBackend:
     @pytest.mark.asyncio
     async def test_markdown_format_limitation(self, backend):
         """Test that Scrapy doesn't provide markdown (returns None)"""
-        result = await backend.crawl("https://httpbin.org/html", format="markdown")
+        result = await backend.crawl("https://example.com", format="markdown")
 
         assert result.backend_used == "scrapy"
         assert result.markdown is None  # Scrapy doesn't convert to markdown
@@ -38,7 +38,7 @@ class TestScrapyBackend:
     @pytest.mark.asyncio
     async def test_structured_format_limitation(self, backend):
         """Test that Scrapy doesn't provide structured data"""
-        result = await backend.crawl("https://httpbin.org/html", format="structured")
+        result = await backend.crawl("https://example.com", format="structured")
 
         assert result.backend_used == "scrapy"
         assert result.structured_data is None  # Scrapy doesn't extract structured data
@@ -47,7 +47,7 @@ class TestScrapyBackend:
     @pytest.mark.asyncio
     async def test_metadata_extraction(self, backend):
         """Test metadata extraction from Scrapy"""
-        result = await backend.crawl("https://httpbin.org/html", format="html")
+        result = await backend.crawl("https://example.com", format="html")
 
         assert result.backend_used == "scrapy"
         assert result.metadata is not None
@@ -69,7 +69,7 @@ async def run_manual_tests():
 
     config = CrawlConfig()
     backend = ScrapyBackend(config)
-    test_url = "https://httpbin.org/html"
+    test_url = "https://example.com"
 
     # Test 1: HTML format (primary use case for Scrapy)
     print("\n1. Testing HTML format...")
