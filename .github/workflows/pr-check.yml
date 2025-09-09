@@ -7,30 +7,36 @@ on:
 jobs:
   required-checks:
     runs-on: macos-latest
+    env:
+      # Provide via repo/org secrets (Settings → Secrets → Actions)
+      FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.12'  # Updated to match CI configuration
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -e .
-        pip install pytest pytest-asyncio black flake8
-    
-    - name: Check code formatting
-      run: black --check crawlstudio/
-    
-    - name: Check code style
-      run: flake8 crawlstudio/
-    
-    - name: Run core tests
-      run: pytest tests/backends/ -v
-    
-    - name: Check package builds
-      run: |
-        pip install build
-        python -m build
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest pytest-asyncio black flake8 playwright
+
+      - name: Install Playwright browsers (Chromium)
+        run: python -m playwright install chromium
+
+      - name: Check code formatting
+        run: black --check crawlstudio/
+
+      - name: Check code style
+        run: flake8 crawlstudio/
+
+      - name: Run core tests
+        run: pytest tests/backends/ -v
+
+      - name: Check package builds
+        run: |
+          pip install build
+          python -m build

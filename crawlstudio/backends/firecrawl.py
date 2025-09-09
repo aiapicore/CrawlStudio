@@ -35,32 +35,29 @@ class FirecrawlBackend(CrawlBackend):
 
         # Handle different response structure and check for errors
         if (
-            hasattr(scrape_result, 'metadata')
+            hasattr(scrape_result, "metadata")
             and scrape_result.metadata
             and scrape_result.metadata.error
         ):
-            raise BackendExecutionError(
-                f"Firecrawl scrape failed: {scrape_result.metadata.error}"
-            )
+            raise BackendExecutionError(f"Firecrawl scrape failed: {scrape_result.metadata.error}")
 
         # Extract data from the new response format
-        if hasattr(scrape_result, 'markdown'):
+        if hasattr(scrape_result, "markdown"):
             # New API response object
             data = {
                 "markdown": scrape_result.markdown,
                 "html": (
-                    getattr(scrape_result, 'html', None)
-                    or getattr(scrape_result, 'rawHtml', None)
+                    getattr(scrape_result, "html", None) or getattr(scrape_result, "rawHtml", None)
                 ),
-                "metadata": (
-                    scrape_result.metadata.__dict__ if scrape_result.metadata else {}
-                ),
+                "metadata": (scrape_result.metadata.__dict__ if scrape_result.metadata else {}),
             }
         else:
             # Fallback for dict response
-            data = scrape_result if isinstance(scrape_result, dict) else {
-                "markdown": str(scrape_result)
-            }
+            data = (
+                scrape_result
+                if isinstance(scrape_result, dict)
+                else {"markdown": str(scrape_result)}
+            )
 
         # Handle structured data extraction (simplified for now)
         structured_data = None
@@ -69,7 +66,7 @@ class FirecrawlBackend(CrawlBackend):
             structured_data = {
                 "title": data.get("title", ""),
                 "summary": data.get("markdown", "")[:200] + "..." if data.get("markdown") else "",
-                "keywords": []
+                "keywords": [],
             }
 
         # Clean up markdown content if it has the 'markdown=' prefix

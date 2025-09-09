@@ -19,20 +19,14 @@ class Crawl4AIBackend(CrawlBackend):
         # BrowserConfig is configured implicitly in AsyncWebCrawler
 
         # Configure crawler run settings - disable cache to avoid Windows Unicode issues
-        run_config = CrawlerRunConfig(
-            cache_mode=CacheMode.DISABLED,
-            word_count_threshold=10
-        )
+        run_config = CrawlerRunConfig(cache_mode=CacheMode.DISABLED, word_count_threshold=10)
 
         # Set up extraction strategy for structured data
         extraction_strategy = None
         if format == "structured" and api_key:
             try:
                 # Configure LLM for extraction
-                llm_config = LLMConfig(
-                    provider="openai/gpt-4o-mini",
-                    api_token=api_key
-                )
+                llm_config = LLMConfig(provider="openai/gpt-4o-mini", api_token=api_key)
 
                 extraction_strategy = LLMExtractionStrategy(
                     llm_config=llm_config,
@@ -65,7 +59,7 @@ class Crawl4AIBackend(CrawlBackend):
             old_stderr = sys.stderr
 
             # Use minimal configuration to avoid Windows Unicode issues
-            with open(os.devnull, 'w', encoding='utf-8') as devnull:
+            with open(os.devnull, "w", encoding="utf-8") as devnull:
                 sys.stdout = devnull
                 sys.stderr = devnull
 
@@ -76,7 +70,7 @@ class Crawl4AIBackend(CrawlBackend):
                         bypass_cache=True,  # Avoid cache Unicode issues
                         extraction_strategy=(
                             extraction_strategy if format == "structured" and api_key else None
-                        )
+                        ),
                     )
 
             # Restore stdout/stderr
@@ -92,14 +86,14 @@ class Crawl4AIBackend(CrawlBackend):
                 elif format == "structured":
                     # Fallback structured data from markdown
                     structured_data = {
-                        "title": getattr(result, 'title', ''),
+                        "title": getattr(result, "title", ""),
                         "summary": result.markdown[:200] + "..." if result.markdown else "",
-                        "keywords": []
+                        "keywords": [],
                     }
 
                 # Filter metadata to only include string values
                 metadata = {}
-                if hasattr(result, 'metadata') and result.metadata:
+                if hasattr(result, "metadata") and result.metadata:
                     for key, value in result.metadata.items():
                         if isinstance(value, (str, int, float, bool)) and value is not None:
                             metadata[key] = str(value)
@@ -112,7 +106,7 @@ class Crawl4AIBackend(CrawlBackend):
                     structured_data=structured_data,
                     metadata=metadata,
                     execution_time=time.time() - start,
-                    cache_hit=getattr(result, 'from_cache', False),
+                    cache_hit=getattr(result, "from_cache", False),
                 )
             else:
                 raise BackendExecutionError(

@@ -22,11 +22,7 @@ class CrawlConfig(BaseSettings):
     timeout: int = 30
     user_agent: str = "CrawlStudio/0.1"
 
-    model_config = SettingsConfigDict(
-        env_file='.env',
-        env_ignore_empty=True,
-        extra='ignore'
-    )
+    model_config = SettingsConfigDict(env_file=".env", env_ignore_empty=True, extra="ignore")
 
     @property
     def api_keys(self) -> Dict[str, Optional[str]]:

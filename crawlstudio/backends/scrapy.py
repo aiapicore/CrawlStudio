@@ -86,12 +86,12 @@ class ScrapyBackend(CrawlBackend):
 
     async def _run_scrapy_subprocess(self, url: str) -> list[Dict[str, object]]:
         """Run Scrapy in a subprocess to avoid reactor conflicts"""
-        with tempfile.NamedTemporaryFile(mode='w+', suffix='.json', delete=False) as temp_file:
+        with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as temp_file:
             output_file = temp_file.name
 
         # Create a simple Scrapy script with proper path handling
-        output_file_escaped = output_file.replace('\\', '\\\\')
-        scrapy_script = f'''
+        output_file_escaped = output_file.replace("\\", "\\\\")
+        scrapy_script = f"""
 import sys
 import json
 import scrapy
@@ -135,25 +135,26 @@ process = CrawlerProcess({{
 
 process.crawl(SimpleSpider)
 process.start()
-'''
+"""
 
         # Write script to temporary file
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as script_file:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as script_file:
             script_file.write(scrapy_script)
             script_path = script_file.name
 
         try:
             # Run the script as subprocess using current Python executable
             result = await asyncio.create_subprocess_exec(
-                sys.executable, script_path,
+                sys.executable,
+                script_path,
                 stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                stderr=asyncio.subprocess.PIPE,
             )
             stdout, stderr = await result.communicate()
 
             # Read results from output file
             try:
-                with open(output_file, 'r', encoding='utf-8') as f:
+                with open(output_file, "r", encoding="utf-8") as f:
                     results = cast(List[Dict[str, object]], json.load(f))
                 return results
             except (FileNotFoundError, json.JSONDecodeError):
@@ -165,6 +166,7 @@ process.start()
             # Clean up temporary files
             try:
                 import os
+
                 os.unlink(script_path)
                 os.unlink(output_file)
             except Exception:

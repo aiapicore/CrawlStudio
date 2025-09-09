@@ -67,7 +67,7 @@ class BrowserUseBackend(CrawlBackend):
                 task=task,
                 llm=llm,
                 max_actions=10,  # Limit actions to prevent runaway
-                use_own_browser=True  # Use separate browser instance
+                use_own_browser=True,  # Use separate browser instance
             )
 
             # Run the agent and get result
@@ -87,10 +87,9 @@ class BrowserUseBackend(CrawlBackend):
         if openai_key:
             try:
                 from langchain_openai import ChatOpenAI
+
                 return ChatOpenAI(
-                    model="gpt-4o-mini",  # Cost-effective model
-                    api_key=openai_key,
-                    temperature=0
+                    model="gpt-4o-mini", api_key=openai_key, temperature=0  # Cost-effective model
                 )
             except ImportError:
                 pass
@@ -98,10 +97,11 @@ class BrowserUseBackend(CrawlBackend):
         if anthropic_key:
             try:
                 from langchain_anthropic import ChatAnthropic
+
                 return ChatAnthropic(
                     model="claude-3-haiku-20240307",  # Fast, cost-effective
                     api_key=anthropic_key,
-                    temperature=0
+                    temperature=0,
                 )
             except ImportError:
                 pass
@@ -160,7 +160,7 @@ class BrowserUseBackend(CrawlBackend):
                 "title": self._extract_title(content),
                 "summary": content[:500] + "..." if len(content) > 500 else content,
                 "content": content,
-                "keywords": self._extract_keywords(content)
+                "keywords": self._extract_keywords(content),
             }
 
         # Create metadata
@@ -168,7 +168,7 @@ class BrowserUseBackend(CrawlBackend):
             "ai_backend": "browser-use",
             "content_length": str(len(content)),
             "format_requested": format,
-            "url": url
+            "url": url,
         }
 
         return CrawlResult(
@@ -179,15 +179,15 @@ class BrowserUseBackend(CrawlBackend):
             structured_data=structured_data,
             metadata=metadata,
             execution_time=execution_time,
-            cache_hit=False  # AI agents don't use traditional caching
+            cache_hit=False,  # AI agents don't use traditional caching
         )
 
     def _extract_title(self, content: str) -> str:
         """Extract title from content."""
-        lines = content.split('\n')
+        lines = content.split("\n")
         for line in lines[:5]:  # Check first few lines
             line = line.strip()
-            if line and not line.startswith('#'):
+            if line and not line.startswith("#"):
                 return line[:100]  # First meaningful line as title
         return ""
 
@@ -196,8 +196,27 @@ class BrowserUseBackend(CrawlBackend):
         # Simple keyword extraction (in production, could use AI for this too)
         words = content.lower().split()
         # Filter common words and get unique terms
-        common_words = {'the', 'and', 'or', 'but', 'in', 'on', 'at',
-                        'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were'}
-        keywords = [word.strip('.,!?()[]{}";:') for word in words
-                    if len(word) > 3 and word not in common_words]
+        common_words = {
+            "the",
+            "and",
+            "or",
+            "but",
+            "in",
+            "on",
+            "at",
+            "to",
+            "for",
+            "of",
+            "with",
+            "by",
+            "is",
+            "are",
+            "was",
+            "were",
+        }
+        keywords = [
+            word.strip('.,!?()[]{}";:')
+            for word in words
+            if len(word) > 3 and word not in common_words
+        ]
         return list(set(keywords))[:10]  # Return top 10 unique keywords
