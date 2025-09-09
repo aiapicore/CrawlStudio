@@ -29,6 +29,7 @@ class TestBrowserUseBackend:
         return BrowserUseBackend(config)
 
     @pytest.mark.asyncio
+    @pytest.mark.essential
     async def test_dependency_check(self):
         """Test that dependencies are properly checked"""
         config = CrawlConfig()
@@ -40,6 +41,7 @@ class TestBrowserUseBackend:
             assert ("browser-use" in str(e)) or ("API key" in str(e))
 
     @pytest.mark.asyncio
+    @pytest.mark.essential
     @pytest.mark.skipif(not _has_browser_use_deps(), reason="browser-use not installed")
     async def test_markdown_extraction(self, backend):
         """Test AI-driven markdown extraction"""

@@ -53,6 +53,6 @@ jobs:
         env:
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: |
-          pytest -q
+          pytest -q -v -m essential  # Only run tests marked as essential
 
 

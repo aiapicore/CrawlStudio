@@ -16,6 +16,7 @@ class TestScrapyBackend:
         return ScrapyBackend(config)
 
     @pytest.mark.asyncio
+    @pytest.mark.essential
     async def test_basic_crawling(self, backend):
         """Test basic HTML extraction with Scrapy"""
         result = await backend.crawl("https://example.com", format="html")

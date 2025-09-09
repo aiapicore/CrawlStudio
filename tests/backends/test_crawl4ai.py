@@ -19,6 +19,7 @@ class TestCrawl4AIBackend:
         return Crawl4AIBackend(config)
 
     @pytest.mark.asyncio
+    @pytest.mark.essential
     async def test_basic_markdown_crawling(self, backend):
         """Test basic markdown extraction"""
         result = await backend.crawl("https://httpbin.org/html", format="markdown")

@@ -26,6 +26,7 @@ class TestFirecrawlBackend:
         time.sleep(5)  # 5 second delay between tests
 
     @pytest.mark.asyncio
+    @pytest.mark.essential
     async def test_basic_markdown_crawling(self, backend):
         """Test basic markdown extraction"""
         result = await backend.crawl("https://example.com", format="markdown")
