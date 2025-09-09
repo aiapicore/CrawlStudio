@@ -32,7 +32,7 @@ Welcome to CrawlStudio! 🎉 We're building the **ultimate unified web crawling 
 
 ```bash
 # Clone the repository
-git clone https://github.com/saeedashraf/CrawlStudio.git
+git clone https://github.com/aiapicore/CrawlStudio.git
 cd CrawlStudio
 
 # Create virtual environment
@@ -292,8 +292,8 @@ We'll recognize all contributors in:
 ## 💬 Communication
 
 ### **Get Help**
-- 🐛 **Bug reports**: [GitHub Issues](https://github.com/saeedashraf/CrawlStudio/issues)
-- 💡 **Feature requests**: [GitHub Discussions](https://github.com/saeedashraf/CrawlStudio/discussions)
+- 🐛 **Bug reports**: [GitHub Issues](https://github.com/aiapicore/CrawlStudio/issues)
+- 💡 **Feature requests**: [GitHub Discussions](https://github.com/aiapicore/CrawlStudio/discussions)
 - ❓ **Questions**: Start a discussion or create an issue
 
 ### **Code of Conduct**
@@ -322,4 +322,4 @@ Every contribution brings us closer to **10K GitHub stars** and our vision of th
 
 ---
 
-*Ready to contribute? Start by exploring our [issues](https://github.com/saeedashraf/CrawlStudio/issues) or [roadmap](enhancement_suggestions.md)!*
+*Ready to contribute? Start by exploring our [issues](https://github.com/aiapicore/CrawlStudio/issues) or [roadmap](enhancement_suggestions.md)!*

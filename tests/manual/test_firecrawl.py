@@ -4,22 +4,25 @@ Run: python test_firecrawl.py
 """
 import asyncio
 import os
+import pytest
 from dotenv import load_dotenv
 from crawlstudio import CrawlConfig, FirecrawlBackend
 
 load_dotenv()
 
+
+@pytest.mark.asyncio
 async def test_basic_scrape():
     """Test basic URL scraping with markdown format"""
     print("Testing Firecrawl Basic Scrape...")
-    
+
     config = CrawlConfig()
     if not config.firecrawl_api_key:
         print("❌ FIRECRAWL_API_KEY not found in .env file")
         return False
-    
+
     backend = FirecrawlBackend(config)
-    
+
     try:
         result = await backend.crawl("https://nccs-website.vercel.app/", format="markdown")
         print(f"✅ Success: {result.backend_used}")
@@ -32,13 +35,15 @@ async def test_basic_scrape():
         print(f"❌ Error: {str(e)}")
         return False
 
+
+@pytest.mark.asyncio
 async def test_structured_extraction():
     """Test structured data extraction"""
     print("Testing Firecrawl Structured Extraction...")
-    
+
     config = CrawlConfig()
     backend = FirecrawlBackend(config)
-    
+
     try:
         result = await backend.crawl("https://news.ycombinator.com", format="structured")
         print(f"✅ Success: {result.backend_used}")
@@ -50,13 +55,15 @@ async def test_structured_extraction():
         print(f"❌ Error: {str(e)}")
         return False
 
+
+@pytest.mark.asyncio
 async def test_html_extraction():
     """Test raw HTML extraction"""
     print("Testing Firecrawl HTML Extraction...")
-    
+
     config = CrawlConfig()
     backend = FirecrawlBackend(config)
-    
+
     try:
         result = await backend.crawl("https://httpbin.org/html", format="html")
         print(f"✅ Success: {result.backend_used}")
@@ -69,13 +76,15 @@ async def test_html_extraction():
         print(f"❌ Error: {str(e)}")
         return False
 
+
+@pytest.mark.asyncio
 async def test_error_handling():
     """Test error handling with invalid URL"""
     print("Testing Error Handling...")
-    
+
     config = CrawlConfig()
     backend = FirecrawlBackend(config)
-    
+
     try:
         # Test with a truly malformed URL that should fail
         result = await backend.crawl("not-a-valid-url-at-all", format="markdown")
@@ -86,26 +95,27 @@ async def test_error_handling():
         print("=" * 50)
         return True
 
+
 async def main():
     """Run all tests"""
     print("Starting Firecrawl Backend Tests\n")
-    
+
     tests = [
         test_basic_scrape,
-        test_structured_extraction, 
+        test_structured_extraction,
         test_html_extraction,
         test_error_handling
     ]
-    
+
     results = []
     for test in tests:
         result = await test()
         results.append(result)
         print()
-    
+
     passed = sum(results)
     total = len(results)
-    
+
     print(f"📊 Test Results: {passed}/{total} passed")
     if passed == total:
         print("🎉 All tests passed!")

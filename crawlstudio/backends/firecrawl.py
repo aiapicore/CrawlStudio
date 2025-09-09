@@ -1,17 +1,17 @@
 import time
-from typing import Dict, Any
 
 from firecrawl import Firecrawl
 
 from .base import CrawlBackend
-from ..models import CrawlConfig, CrawlResult
+from ..models import CrawlResult
+from ..exceptions import ConfigurationError, BackendExecutionError
 
 
 class FirecrawlBackend(CrawlBackend):
     async def crawl(self, url: str, format: str) -> CrawlResult:
         api_key = self.config.api_keys.get("firecrawl")
         if not api_key:
-            raise ValueError("FIRECRAWL_API_KEY is required")
+            raise ConfigurationError("FIRECRAWL_API_KEY is required")
 
         app = Firecrawl(api_key=api_key)
         start = time.time()
@@ -28,24 +28,40 @@ class FirecrawlBackend(CrawlBackend):
             formats = ["markdown"]
 
         # Use the new v3.4.0 API
-        scrape_result = app.scrape(url, formats=formats)
+        try:
+            scrape_result = app.scrape(url, formats=formats)
+        except Exception as e:
+            raise BackendExecutionError(f"Firecrawl scrape failed: {e}")
 
         # Handle different response structure and check for errors
-        if hasattr(scrape_result, 'metadata') and scrape_result.metadata and scrape_result.metadata.error:
-            raise ValueError(f"Firecrawl scrape failed: {scrape_result.metadata.error}")
+        if (
+            hasattr(scrape_result, 'metadata')
+            and scrape_result.metadata
+            and scrape_result.metadata.error
+        ):
+            raise BackendExecutionError(
+                f"Firecrawl scrape failed: {scrape_result.metadata.error}"
+            )
 
         # Extract data from the new response format
         if hasattr(scrape_result, 'markdown'):
             # New API response object
             data = {
                 "markdown": scrape_result.markdown,
-                "html": getattr(scrape_result, 'html', None) or getattr(scrape_result, 'rawHtml', None),
-                "metadata": scrape_result.metadata.__dict__ if scrape_result.metadata else {}
+                "html": (
+                    getattr(scrape_result, 'html', None)
+                    or getattr(scrape_result, 'rawHtml', None)
+                ),
+                "metadata": (
+                    scrape_result.metadata.__dict__ if scrape_result.metadata else {}
+                ),
             }
         else:
             # Fallback for dict response
-            data = scrape_result if isinstance(scrape_result, dict) else {"markdown": str(scrape_result)}
-        
+            data = scrape_result if isinstance(scrape_result, dict) else {
+                "markdown": str(scrape_result)
+            }
+
         # Handle structured data extraction (simplified for now)
         structured_data = None
         if format == "structured":
@@ -65,7 +81,7 @@ class FirecrawlBackend(CrawlBackend):
         raw_metadata = data.get("metadata", {})
         if not isinstance(raw_metadata, dict):
             raw_metadata = {}
-        
+
         # Filter metadata to only include string values (Pydantic requirement)
         metadata = {}
         for key, value in raw_metadata.items():

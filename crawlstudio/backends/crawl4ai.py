@@ -1,13 +1,13 @@
 import time
 import os
 import sys
-from typing import Dict, Any, Optional
 
-from crawl4ai import AsyncWebCrawler, BrowserConfig, CrawlerRunConfig, CacheMode
+from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode
 from crawl4ai import LLMExtractionStrategy, LLMConfig
 
 from .base import CrawlBackend
-from ..models import CrawlConfig, CrawlResult
+from ..models import CrawlResult
+from ..exceptions import BackendExecutionError
 
 
 class Crawl4AIBackend(CrawlBackend):
@@ -15,11 +15,8 @@ class Crawl4AIBackend(CrawlBackend):
         start = time.time()
         api_key = self.config.api_keys.get("crawl4ai")  # Optional for LLM extraction
 
-        # Configure browser settings for Windows compatibility
-        browser_config = BrowserConfig(
-            headless=True,
-            verbose=False  # Reduce noise
-        )
+        # Configure browser settings for Windows compatibility (kept for future use)
+        # BrowserConfig is configured implicitly in AsyncWebCrawler
 
         # Configure crawler run settings - disable cache to avoid Windows Unicode issues
         run_config = CrawlerRunConfig(
@@ -36,7 +33,7 @@ class Crawl4AIBackend(CrawlBackend):
                     provider="openai/gpt-4o-mini",
                     api_token=api_key
                 )
-                
+
                 extraction_strategy = LLMExtractionStrategy(
                     llm_config=llm_config,
                     schema={
@@ -44,35 +41,44 @@ class Crawl4AIBackend(CrawlBackend):
                         "properties": {
                             "title": {"type": "string", "description": "Page title"},
                             "summary": {"type": "string", "description": "Page summary"},
-                            "keywords": {"type": "array", "items": {"type": "string"}, "description": "Key topics"}
-                        }
+                            "keywords": {
+                                "type": "array",
+                                "items": {"type": "string"},
+                                "description": "Key topics",
+                            },
+                        },
                     },
                     extraction_type="schema",
-                    instruction="Extract the title, a brief summary, and key topics from this webpage."
+                    instruction=(
+                        "Extract the title, a brief summary, and key topics from this webpage."
+                    ),
                 )
                 run_config.extraction_strategy = extraction_strategy
-            except Exception as e:
+            except Exception:
                 # Fallback if LLM config fails
-                print(f"LLM extraction setup failed: {e}")
+                # Log or ignore; fallback to non-LLM flow
+                pass
 
         try:
             # Temporarily redirect stdout to handle Unicode issues on Windows
             old_stdout = sys.stdout
             old_stderr = sys.stderr
-            
+
             # Use minimal configuration to avoid Windows Unicode issues
             with open(os.devnull, 'w', encoding='utf-8') as devnull:
                 sys.stdout = devnull
                 sys.stderr = devnull
-                
+
                 async with AsyncWebCrawler(headless=True, verbose=False) as crawler:
                     result = await crawler.arun(
                         url=url,
                         word_count_threshold=10,
                         bypass_cache=True,  # Avoid cache Unicode issues
-                        extraction_strategy=extraction_strategy if format == "structured" and api_key else None
+                        extraction_strategy=(
+                            extraction_strategy if format == "structured" and api_key else None
+                        )
                     )
-                    
+
             # Restore stdout/stderr
             sys.stdout = old_stdout
             sys.stderr = old_stderr
@@ -109,10 +115,12 @@ class Crawl4AIBackend(CrawlBackend):
                     cache_hit=getattr(result, 'from_cache', False),
                 )
             else:
-                raise ValueError(f"Crawl4AI failed: {getattr(result, 'error_message', 'Unknown error')}")
+                raise BackendExecutionError(
+                    f"Crawl4AI failed: {getattr(result, 'error_message', 'Unknown error')}"
+                )
 
         except Exception as e:
             # Restore stdout/stderr in case of error
             sys.stdout = old_stdout
             sys.stderr = old_stderr
-            raise ValueError(f"Crawl4AI backend error: {str(e)}")
+            raise BackendExecutionError(f"Crawl4AI backend error: {str(e)}")

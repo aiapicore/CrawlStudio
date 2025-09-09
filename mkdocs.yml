@@ -1,8 +1,8 @@
 site_name: CrawlStudio Documentation
 site_description: Unified Python library for web crawling tools
-site_url: https://github.com/saeedashraf/CrawlStudio
-repo_url: https://github.com/saeedashraf/CrawlStudio
-repo_name: saeedashraf/CrawlStudio
+site_url: https://github.com/aiapicore/CrawlStudio
+repo_url: https://github.com/aiapicore/CrawlStudio
+repo_name: aiapicore/CrawlStudio
 
 theme:
   name: material
@@ -27,9 +27,9 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - API Reference:
-    - Models: api/models.md
-    - Backends: api/backends.md
-    - Utilities: api/utils.md
+      - Models: api/models.md
+      - Backends: api/backends.md
+      - Utilities: api/utils.md
   - Examples: examples.md
   - Contributing: CONTRIBUTING.md
 
