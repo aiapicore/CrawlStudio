@@ -27,6 +27,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .[dev]
 
+      - name: Install Playwright (Python)
+        run: |
+          pip install playwright
+
+      - name: Install Playwright browsers (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          python -m playwright install --with-deps chromium
+
+      - name: Install Playwright browsers (macOS/Windows)
+        if: matrix.os != 'ubuntu-latest'
+        run: |
+          python -m playwright install chromium
+
       - name: Lint (flake8)
         run: |
           flake8 crawlstudio tests
