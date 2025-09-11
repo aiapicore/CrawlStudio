@@ -55,6 +55,7 @@ class BrowserUseBackend(CrawlBackend):
 
         try:
             from browser_use import Agent
+
             llm = self._get_llm()
             task = self._create_task(url, format)
 
@@ -104,7 +105,7 @@ class BrowserUseBackend(CrawlBackend):
                         if len(args) == 2:
                             messages, output_format = args
                             if output_format:
-                                kwargs['config'] = {'output_format': output_format}
+                                kwargs["config"] = {"output_format": output_format}
                             return await self._llm.ainvoke(messages, **kwargs)
                         else:
                             return await self._llm.ainvoke(*args, **kwargs)
@@ -112,9 +113,7 @@ class BrowserUseBackend(CrawlBackend):
                     def invoke(self, *args: Any, **kwargs: Any) -> Any:
                         return self._llm.invoke(*args, **kwargs)
 
-                return ChatOpenAI(
-                    model="gpt-4o-mini", api_key=openai_key, temperature=0
-                )
+                return ChatOpenAI(model="gpt-4o-mini", api_key=openai_key, temperature=0)
             except ImportError:
                 pass
 
@@ -145,7 +144,7 @@ class BrowserUseBackend(CrawlBackend):
                         if len(args) == 2:
                             messages, output_format = args
                             if output_format:
-                                kwargs['config'] = {'output_format': output_format}
+                                kwargs["config"] = {"output_format": output_format}
                             return await self._llm.ainvoke(messages, **kwargs)
                         else:
                             return await self._llm.ainvoke(*args, **kwargs)
