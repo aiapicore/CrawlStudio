@@ -36,12 +36,12 @@ dependencies = [
     "crawl4ai>=0.4.24",
     "firecrawl-py>=0.0.20",
     "scrapy>=2.11",
-    "langchain-anthropic>=0.3.19",
-    "langchain-openai>=0.3.33",
-    "browser-use>=0.7.7",
     "aiohttp>=3.9",
     "diskcache>=5.6",
     "playwright>=1.54",
+    "browser-use",
+    "langchain-openai",
+    "langchain-anthropic",
 ]
 
 [project.optional-dependencies]
