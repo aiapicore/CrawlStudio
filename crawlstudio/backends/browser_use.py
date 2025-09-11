@@ -1,5 +1,6 @@
 import time
 import os
+from typing import Any
 
 from .base import CrawlBackend
 from ..models import CrawlConfig, CrawlResult
@@ -81,7 +82,7 @@ class BrowserUseBackend(CrawlBackend):
                 from browser_use import ChatOpenAI
 
                 class ChatOpenAIWrapper:
-                    def __init__(self, model, api_key, temperature):
+                    def __init__(self, model: str, api_key: str, temperature: float) -> None:
                         self._llm = ChatOpenAI(
                             model=model, api_key=api_key, temperature=temperature
                         )
@@ -91,13 +92,13 @@ class BrowserUseBackend(CrawlBackend):
                         self.model_name = model
                         self.temperature = temperature
 
-                    def __getattr__(self, name):
+                    def __getattr__(self, name: str) -> Any:
                         return getattr(self._llm, name)
 
-                    def __setattr__(self, name, value):
+                    def __setattr__(self, name: str, value: Any) -> None:
                         super().__setattr__(name, value)
 
-                    async def ainvoke(self, *args, **kwargs):
+                    async def ainvoke(self, *args: Any, **kwargs: Any) -> Any:
                         # Handle browser-use specific calling pattern
                         # browser-use calls: ainvoke(messages, output_format)
                         if len(args) == 2:
@@ -108,7 +109,7 @@ class BrowserUseBackend(CrawlBackend):
                         else:
                             return await self._llm.ainvoke(*args, **kwargs)
 
-                    def invoke(self, *args, **kwargs):
+                    def invoke(self, *args: Any, **kwargs: Any) -> Any:
                         return self._llm.invoke(*args, **kwargs)
 
                 return ChatOpenAI(
@@ -122,7 +123,7 @@ class BrowserUseBackend(CrawlBackend):
                 from browser_use import ChatAnthropic
 
                 class ChatAnthropicWrapper:
-                    def __init__(self, model, api_key, temperature):
+                    def __init__(self, model: str, api_key: str, temperature: float) -> None:
                         self._llm = ChatAnthropic(
                             model=model, api_key=api_key, temperature=temperature
                         )
@@ -131,14 +132,14 @@ class BrowserUseBackend(CrawlBackend):
                         self.model_name = model
                         self.temperature = temperature
 
-                    def __getattr__(self, name):
+                    def __getattr__(self, name: str) -> Any:
                         return getattr(self._llm, name)
 
-                    def __setattr__(self, name, value):
+                    def __setattr__(self, name: str, value: Any) -> None:
                         super().__setattr__(name, value)
 
                     # Explicitly proxy key methods to ensure they work
-                    async def ainvoke(self, *args, **kwargs):
+                    async def ainvoke(self, *args: Any, **kwargs: Any) -> Any:
                         # Handle browser-use specific calling pattern
                         # browser-use calls: ainvoke(messages, output_format)
                         if len(args) == 2:
@@ -149,7 +150,7 @@ class BrowserUseBackend(CrawlBackend):
                         else:
                             return await self._llm.ainvoke(*args, **kwargs)
 
-                    def invoke(self, *args, **kwargs):
+                    def invoke(self, *args: Any, **kwargs: Any) -> Any:
                         return self._llm.invoke(*args, **kwargs)
 
                 return ChatAnthropic(
