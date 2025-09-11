@@ -6,12 +6,13 @@ build-backend = "hatchling.build"
 name = "crawlstudio"
 version = "0.1.0"
 authors = [
-  { name = "Saeed Ashraf", email = "saeedashraf@example.com" },
+  { name = "Saeed Ashraf", email = "saeedashrafv@gmail.com" },
+  { name = "Abbas Mirmashhouri", email = "mirmashhouri@gmail.com" },
 ]
 description = "Unified Python library for web crawling tools - supports Firecrawl, Crawl4AI, Scrapy, and Browser-Use backends"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -32,7 +33,7 @@ dependencies = [
     "pydantic>=2.0",
     "pydantic-settings>=2.0", 
     "python-dotenv>=1.0",
-    "crawl4ai>=0.7.4",
+    "crawl4ai>=0.4.24",
     "firecrawl-py>=0.0.20",
     "scrapy>=2.11",
     "aiohttp>=3.9",
@@ -54,10 +55,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/saeedashraf/CrawlStudio"
-Repository = "https://github.com/saeedashraf/CrawlStudio"
-Issues = "https://github.com/saeedashraf/CrawlStudio/issues"
-Documentation = "https://github.com/saeedashraf/CrawlStudio#readme"
+Homepage = "https://github.com/aiapicore/CrawlStudio"
+Repository = "https://github.com/aiapicore/CrawlStudio"
+Issues = "https://github.com/aiapicore/CrawlStudio/issues"
+Documentation = "https://github.com/aiapicore/CrawlStudio#readme"
 
 [project.scripts]
 crawlstudio = "crawlstudio.cli:main"
@@ -70,7 +71,8 @@ line-length = 100
 target-version = ['py38']
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
+ignore_missing_imports = true

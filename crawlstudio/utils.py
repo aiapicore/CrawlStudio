@@ -1,7 +1,6 @@
-from typing import Any
 from diskcache import Cache
 import aiohttp
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urljoin
 
 cache = Cache("crawlstudio_cache")
 

@@ -1,0 +1,8 @@
+[flake8]
+max-line-length = 100
+extend-ignore = E203,W503,W293
+exclude = .git,__pycache__,.venv,venv,build,dist,tests,examples
+per-file-ignores =
+    __init__.py:F401,
+    crawlstudio/__init__.py:F401,E501,
+    crawlstudio/backends/__init__.py:F401

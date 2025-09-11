@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Lint, Type-Check, Test (${{ matrix.os }} / py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest]
+        python-version: ["3.12"]  # Limiting to Python versions that support numpy 1.26.0
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+
+      - name: Install Playwright (Python)
+        run: |
+          pip install playwright
+
+      - name: Install Playwright browsers (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          python -m playwright install --with-deps chromium
+
+      - name: Install Playwright browsers (macOS/Windows)
+        if: matrix.os != 'ubuntu-latest'
+        run: |
+          python -m playwright install chromium
+
+      - name: Lint (flake8)
+        run: |
+          flake8 crawlstudio tests
+
+      - name: Type-check (mypy)
+        run: |
+          mypy crawlstudio
+
+      - name: Run tests (pytest)
+        env:
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+        run: |
+          pytest -q -v -m essential  # Only run tests marked as essential
+
+

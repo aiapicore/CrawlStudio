@@ -12,10 +12,84 @@ CrawlStudio provides a unified Python API for various web crawling backends incl
 pip install crawlstudio
 ```
 
-## 🚀 Usage Examples
+From source (recommended for contributors):
+```bash
+git clone https://github.com/aiapicore/CrawlStudio.git
+cd CrawlStudio
+python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -e .[dev]
+```
+
+Optional extras for AI browser backend:
+```bash
+pip install .[browser-use]
+```
+
+## ⚡ Quick Start
+- CLI:
+```bash
+crawlstudio https://example.com --backend firecrawl --format markdown --print markdown
+```
+- Python:
+```python
+import asyncio
+from crawlstudio import CrawlConfig, FirecrawlBackend
+
+async def main():
+    cfg = CrawlConfig()
+    res = await FirecrawlBackend(cfg).crawl("https://example.com", format="markdown")
+    print(res.markdown)
+
+asyncio.run(main())
+```
+
+## 🔐 Environment
+Create a `.env` in the project root if using external services/backends:
+```env
+FIRECRAWL_API_KEY=your_firecrawl_key
+OPENAI_API_KEY=your_openai_key
+ANTHROPIC_API_KEY=your_anthropic_key
+```
+
+For Browser-Use backend, you must set at least one of `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`.
+
+If you use headless browsers (via browser-use), install Playwright runtime:
+```bash
+python -m pip install playwright
+python -m playwright install
+```
+
+## 🚀 CLI Usage
+After install, use the CLI to crawl a URL with different backends and formats:
+```bash
+crawlstudio https://example.com --backend firecrawl --format markdown --print markdown
+crawlstudio https://example.com --backend crawl4ai --format html --print html
+crawlstudio https://example.com --backend scrapy --format structured --print structured
+crawlstudio https://example.com --backend browser-use --format structured --print structured
+```
+- `--backend`: one of `firecrawl`, `crawl4ai`, `scrapy`, `browser-use`
+- `--format`: one of `markdown`, `html`, `structured`
+- `--print`: choose what to print: `summary` (default), `markdown`, `html`, `structured`
+
+## 📘 Usage Examples (API)
+The library exposes a unified interface; below are end-to-end examples for each backend.
+
+### 🧑‍💻 Python Usage
+```python
+import asyncio
+from crawlstudio import CrawlConfig, FirecrawlBackend
+
+async def main():
+    config = CrawlConfig()
+    backend = FirecrawlBackend(config)
+    result = await backend.crawl("https://example.com", format="markdown")
+    print(result.markdown)
+
+asyncio.run(main())
+```
 
 ### Firecrawl Example
-
 ```python
 import asyncio
 from crawlstudio import CrawlConfig, FirecrawlBackend
@@ -30,7 +104,6 @@ asyncio.run(main())
 ```
 
 ### Crawl4AI Example
-
 ```python
 import asyncio
 from crawlstudio import CrawlConfig, Crawl4AIBackend
@@ -45,7 +118,6 @@ asyncio.run(main())
 ```
 
 ### Scrapy Example
-
 ```python
 import asyncio
 from crawlstudio import CrawlConfig, ScrapyBackend
@@ -60,7 +132,6 @@ asyncio.run(main())
 ```
 
 ### Browser-Use (AI-Driven) Example
-
 ```python
 import asyncio
 from crawlstudio import CrawlConfig, BrowserUseBackend
@@ -74,7 +145,37 @@ async def main():
 asyncio.run(main())
 ```
 
-> **Note**: Browser-Use backend requires `pip install browser-use` and an AI API key (OpenAI or Anthropic). See [BROWSER_USE_SETUP.md](BROWSER_USE_SETUP.md) for details.
+## 🧪 Tests & Checks
+Run the test suite (pytest) and local checks (flake8, mypy):
+```bash
+pytest -q
+flake8
+mypy crawlstudio
+```
+Notes:
+- We target Python 3.10+ for typing (PEP 604 `X | Y` unions).
+- Third-party libraries without type stubs are ignored by mypy (`ignore_missing_imports = true`).
+
+## 🛠️ Contributing Quickstart
+- Fork and clone the repo, create a virtual env, then install dev deps:
+```bash
+git clone https://github.com/aiapicore/CrawlStudio.git
+cd CrawlStudio
+python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\Activate.ps1
+pip install -e .[dev]
+```
+- Optional: install pre-commit hooks
+```bash
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files
+```
+- Run the suite before submitting a PR:
+```bash
+flake8
+mypy crawlstudio
+pytest -q
+```
 
 ## ⚡ Backend Comparison
 
