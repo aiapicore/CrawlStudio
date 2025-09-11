@@ -53,27 +53,19 @@ class BrowserUseBackend(CrawlBackend):
         start = time.time()
 
         try:
-            # Import browser-use components
             from browser_use import Agent
-
-            # Try to import LLM - prefer OpenAI, fallback to others
             llm = self._get_llm()
-
-            # Create task based on format requested
             task = self._create_task(url, format)
 
-            # Create and run agent
             agent = Agent(
                 task=task,
                 llm=llm,
-                max_actions=10,  # Limit actions to prevent runaway
+                max_actions=15,  # Allow more actions for complex pages
                 use_own_browser=True,  # Use separate browser instance
             )
 
-            # Run the agent and get result
             result = await agent.run()
 
-            # Process the agent result into our format
             return self._process_agent_result(url, format, result, time.time() - start)
 
         except Exception as e:
@@ -86,17 +78,75 @@ class BrowserUseBackend(CrawlBackend):
 
         if openai_key:
             try:
-                from langchain_openai import ChatOpenAI
+                from browser_use import ChatOpenAI
+
+                class ChatOpenAIWrapper:
+                    def __init__(self, model, api_key, temperature):
+                        self._llm = ChatOpenAI(model=model, api_key=api_key, temperature=temperature)
+                        # Pre-populate expected attributes
+                        self.provider = "openai"
+                        self.model = model
+                        self.model_name = model
+                        self.temperature = temperature
+                    
+                    def __getattr__(self, name):
+                        return getattr(self._llm, name)
+                    
+                    def __setattr__(self, name, value):
+                        super().__setattr__(name, value)
+                    
+                    async def ainvoke(self, *args, **kwargs):
+                        # Handle browser-use specific calling pattern
+                        # browser-use calls: ainvoke(messages, output_format)
+                        if len(args) == 2:
+                            messages, output_format = args
+                            if output_format:
+                                kwargs['config'] = {'output_format': output_format}
+                            return await self._llm.ainvoke(messages, **kwargs)
+                        else:
+                            return await self._llm.ainvoke(*args, **kwargs)
+                    
+                    def invoke(self, *args, **kwargs):
+                        return self._llm.invoke(*args, **kwargs)
 
                 return ChatOpenAI(
-                    model="gpt-4o-mini", api_key=openai_key, temperature=0  # Cost-effective model
+                    model="gpt-4o-mini", api_key=openai_key, temperature=0  
                 )
             except ImportError:
                 pass
 
         if anthropic_key:
             try:
-                from langchain_anthropic import ChatAnthropic
+                from browser_use import ChatAnthropic
+
+                class ChatAnthropicWrapper:
+                    def __init__(self, model, api_key, temperature):
+                        self._llm = ChatAnthropic(model=model, api_key=api_key, temperature=temperature)
+                        self.provider = "anthropic"
+                        self.model = model
+                        self.model_name = model
+                        self.temperature = temperature
+                    
+                    def __getattr__(self, name):
+                        return getattr(self._llm, name)
+                    
+                    def __setattr__(self, name, value):
+                        super().__setattr__(name, value)
+                    
+                    # Explicitly proxy key methods to ensure they work
+                    async def ainvoke(self, *args, **kwargs):
+                        # Handle browser-use specific calling pattern
+                        # browser-use calls: ainvoke(messages, output_format)
+                        if len(args) == 2:
+                            messages, output_format = args
+                            if output_format:
+                                kwargs['config'] = {'output_format': output_format}
+                            return await self._llm.ainvoke(messages, **kwargs)
+                        else:
+                            return await self._llm.ainvoke(*args, **kwargs)
+                    
+                    def invoke(self, *args, **kwargs):
+                        return self._llm.invoke(*args, **kwargs)
 
                 return ChatAnthropic(
                     model="claude-3-haiku-20240307",  # Fast, cost-effective
@@ -112,27 +162,69 @@ class BrowserUseBackend(CrawlBackend):
 
     def _create_task(self, url: str, format: str) -> str:
         """Create AI task based on requested format."""
-        base_task = f"Navigate to {url} and extract content"
-
         if format == "markdown":
-            return (
-                f"{base_task}. Convert the main content to markdown format, "
-                f"preserving structure with headers, paragraphs, and lists. "
-                f"Focus on the primary text content, ignoring navigation and ads."
-            )
+            return f"""
+Go to {url} and extract the main content from the page.
+
+Extract the following information:
+- The main title/heading of the page
+- All section headings (h1, h2, h3, etc.)
+- The main body paragraphs with their content
+- Any important lists or bullet points
+- Key information tables if present
+
+Present the information in markdown format like this:
+# [Main Title]
+
+## [Section Heading 1]
+[Content of section 1...]
+
+## [Section Heading 2] 
+[Content of section 2...]
+
+Ignore navigation menus, sidebars, advertisements, and footer content.
+Focus only on the main article or content body.
+"""
         elif format == "html":
-            return (
-                f"{base_task}. Extract the raw HTML source of the main content area. "
-                f"Include the HTML tags and structure."
-            )
+            return f"""
+Go to {url} and extract the main content area HTML.
+
+Find the main content section (usually within article, main, or content div tags) and return:
+- The raw HTML of the main content area
+- Include all HTML tags and structure
+- Exclude navigation, sidebar, and footer HTML
+
+Present the HTML code cleanly formatted.
+"""
         elif format == "structured":
-            return (
-                f"{base_task}. Extract structured information including: "
-                f"page title, main headings, key paragraphs, important links, "
-                f"and any data tables. Format as a structured summary."
-            )
+            return f"""
+Go to {url} and extract structured information from the page.
+
+Extract the following data:
+- Page title
+- Main headings and subheadings
+- Key paragraphs (first 2-3 sentences of each section)
+- Important links with their text and URLs
+- Any data in tables or lists
+- Publication date if available
+
+Present the information in this structured format:
+Title: [page title]
+Headings: [list of main headings]
+Content Summary: [key points from each section]
+Important Links: [link text - URL]
+"""
         else:
-            return f"{base_task}. Summarize the main content and key information."
+            return f"""
+Go to {url} and extract the main information.
+
+Provide a clear summary of:
+- What the page is about (main topic)
+- Key points or sections
+- Important information or data
+
+Present in a clear, organized format.
+"""
 
     def _process_agent_result(
         self,
@@ -143,10 +235,8 @@ class BrowserUseBackend(CrawlBackend):
     ) -> CrawlResult:
         """Process agent result into CrawlResult format."""
 
-        # Extract text content from agent result
         content = str(agent_result) if agent_result else ""
 
-        # Process based on format
         markdown_content = None
         html_content = None
         structured_data = None
@@ -163,7 +253,6 @@ class BrowserUseBackend(CrawlBackend):
                 "keywords": self._extract_keywords(content),
             }
 
-        # Create metadata
         metadata = {
             "ai_backend": "browser-use",
             "content_length": str(len(content)),
