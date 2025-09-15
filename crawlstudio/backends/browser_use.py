@@ -1,6 +1,6 @@
 import time
 import os
-from typing import Any, Union
+from typing import Any
 
 from .base import CrawlBackend
 from ..models import CrawlConfig, CrawlResult
@@ -113,6 +113,7 @@ class BrowserUseBackend(CrawlBackend):
                     def invoke(self, *args: Any, **kwargs: Any) -> Any:
                         # Synchronous version - use ainvoke with asyncio if needed
                         import asyncio
+
                         try:
                             loop = asyncio.get_event_loop()
                         except RuntimeError:
@@ -159,6 +160,7 @@ class BrowserUseBackend(CrawlBackend):
                     def invoke(self, *args: Any, **kwargs: Any) -> Any:
                         # Synchronous version - use ainvoke with asyncio if needed
                         import asyncio
+
                         try:
                             loop = asyncio.get_event_loop()
                         except RuntimeError:
