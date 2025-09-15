@@ -41,7 +41,7 @@ jobs:
         run: flake8 crawlstudio/
 
       - name: Run core tests
-        run: pytest tests/backends/ -v essential
+        run: pytest tests/backends/ -v -m essential
 
       - name: Check package builds
         run: |
