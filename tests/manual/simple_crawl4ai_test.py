@@ -15,7 +15,7 @@ async def test_crawl4ai():
 
     try:
         print("Testing basic markdown extraction...")
-        result = await backend.crawl("https://httpbin.org/html", format="markdown")
+        result = await backend.crawl("https://example.com/", format="markdown")
         print(f"SUCCESS: {result.backend_used}")
         print(f"Execution time: {result.execution_time:.2f}s")
         print(f"Markdown length: {len(result.markdown) if result.markdown else 0}")
@@ -24,13 +24,13 @@ async def test_crawl4ai():
         print("=" * 50)
 
         print("Testing HTML extraction...")
-        result2 = await backend.crawl("https://httpbin.org/html", format="html")
+        result2 = await backend.crawl("https://example.com/", format="html")
         print(f"SUCCESS: {result2.backend_used}")
         print(f"HTML length: {len(result2.raw_html) if result2.raw_html else 0}")
         print("=" * 50)
 
         print("Testing structured extraction...")
-        result3 = await backend.crawl("https://httpbin.org/html", format="structured")
+        result3 = await backend.crawl("https://example.com/", format="structured")
         print(f"SUCCESS: {result3.backend_used}")
         print(f"Structured data: {result3.structured_data}")
         print("=" * 50)

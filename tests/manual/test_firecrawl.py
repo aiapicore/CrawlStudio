@@ -65,7 +65,7 @@ async def test_html_extraction():
     backend = FirecrawlBackend(config)
 
     try:
-        result = await backend.crawl("https://httpbin.org/html", format="html")
+        result = await backend.crawl("https://example.com/", format="html")
         print(f"✅ Success: {result.backend_used}")
         print(f"⏱️ Execution time: {result.execution_time:.2f}s")
         print(f"📄 HTML length: {len(result.raw_html) if result.raw_html else 0}")

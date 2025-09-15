@@ -22,10 +22,10 @@ class TestCrawl4AIBackend:
     @pytest.mark.essential
     async def test_basic_markdown_crawling(self, backend):
         """Test basic markdown extraction"""
-        result = await backend.crawl("https://httpbin.org/html", format="markdown")
+        result = await backend.crawl("https://example.com/", format="markdown")
 
         assert result.backend_used == "crawl4ai"
-        assert result.url == "https://httpbin.org/html"
+        assert result.url == "https://example.com/"
         assert result.markdown is not None
         assert len(result.markdown) > 0
         assert result.execution_time > 0
@@ -33,7 +33,7 @@ class TestCrawl4AIBackend:
     @pytest.mark.asyncio
     async def test_html_extraction(self, backend):
         """Test HTML extraction"""
-        result = await backend.crawl("https://httpbin.org/html", format="html")
+        result = await backend.crawl("https://example.com/", format="html")
 
         assert result.backend_used == "crawl4ai"
         assert result.raw_html is not None
@@ -43,7 +43,7 @@ class TestCrawl4AIBackend:
     @pytest.mark.asyncio
     async def test_structured_extraction_without_api_key(self, backend):
         """Test structured extraction fallback without API key"""
-        result = await backend.crawl("https://httpbin.org/html", format="structured")
+        result = await backend.crawl("https://example.com/", format="structured")
 
         assert result.backend_used == "crawl4ai"
         assert result.structured_data is not None
@@ -62,7 +62,7 @@ class TestCrawl4AIBackend:
         """Test crawling different websites"""
         test_urls = [
             "https://example.com",
-            "https://httpbin.org/html"
+            "https://example.com/"
         ]
 
         for url in test_urls:
@@ -80,7 +80,7 @@ async def run_manual_tests():
 
     config = CrawlConfig()
     backend = Crawl4AIBackend(config)
-    test_url = "https://httpbin.org/html"
+    test_url = "https://example.com/"
 
     # Test 1: Markdown format
     print("\n1. Testing MARKDOWN format...")

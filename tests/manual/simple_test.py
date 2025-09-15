@@ -25,7 +25,7 @@ async def test_firecrawl():
 
     try:
         print("Testing basic scrape...")
-        result = await backend.crawl("https://httpbin.org/html", format="markdown")
+        result = await backend.crawl("https://example.com/", format="markdown")
         print(f"SUCCESS: {result.backend_used}")
         print(f"Execution time: {result.execution_time:.2f}s")
         print(f"Markdown length: {len(result.markdown) if result.markdown else 0}")
@@ -33,7 +33,7 @@ async def test_firecrawl():
         print("=" * 50)
 
         print("Testing structured extraction...")
-        result2 = await backend.crawl("https://httpbin.org/html", format="structured")
+        result2 = await backend.crawl("https://example.com/", format="structured")
         print(f"Structured data: {result2.structured_data}")
         print("=" * 50)
 
