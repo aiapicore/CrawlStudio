@@ -52,6 +52,8 @@ jobs:
       - name: Run tests (pytest)
         env:
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           pytest -q -v -m essential  # Only run tests marked as essential
 

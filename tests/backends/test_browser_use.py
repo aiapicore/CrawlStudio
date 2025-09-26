@@ -45,10 +45,10 @@ class TestBrowserUseBackend:
     @pytest.mark.skipif(not _has_browser_use_deps(), reason="browser-use not installed")
     async def test_markdown_extraction(self, backend):
         """Test AI-driven markdown extraction"""
-        result = await backend.crawl("https://httpbin.org/html", format="markdown")
+        result = await backend.crawl("https://example.com/", format="markdown")
 
         assert result.backend_used == "browser-use"
-        assert result.url == "https://httpbin.org/html"
+        assert result.url == "https://example.com/"
         assert result.markdown is not None
         assert result.execution_time > 0
         assert "ai_backend" in result.metadata
@@ -57,7 +57,7 @@ class TestBrowserUseBackend:
     @pytest.mark.skipif(not _has_browser_use_deps(), reason="browser-use not installed")
     async def test_structured_extraction(self, backend):
         """Test AI-driven structured data extraction"""
-        result = await backend.crawl("https://httpbin.org/html", format="structured")
+        result = await backend.crawl("https://example.com/", format="structured")
 
         assert result.backend_used == "browser-use"
         assert result.structured_data is not None
@@ -69,7 +69,7 @@ class TestBrowserUseBackend:
     @pytest.mark.skipif(not _has_browser_use_deps(), reason="browser-use not installed")
     async def test_html_extraction(self, backend):
         """Test AI-driven HTML extraction"""
-        result = await backend.crawl("https://httpbin.org/html", format="html")
+        result = await backend.crawl("https://example.com/", format="html")
 
         assert result.backend_used == "browser-use"
         assert result.raw_html is not None
@@ -103,7 +103,7 @@ async def run_manual_tests():
 
     config = CrawlConfig()
     backend = BrowserUseBackend(config)
-    test_url = "https://httpbin.org/html"
+    test_url = "https://example.com/"
 
     # Test 1: AI-driven markdown extraction
     print("\n1. Testing AI MARKDOWN extraction...")

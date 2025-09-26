@@ -55,10 +55,11 @@ class BrowserUseBackend(CrawlBackend):
 
         try:
             from browser_use import Agent
+
             llm = self._get_llm()
             task = self._create_task(url, format)
 
-            agent = Agent(
+            agent: Agent = Agent(
                 task=task,
                 llm=llm,
                 max_actions=15,  # Allow more actions for complex pages
@@ -72,7 +73,7 @@ class BrowserUseBackend(CrawlBackend):
         except Exception as e:
             raise BackendExecutionError(f"Browser-use backend error: {str(e)}")
 
-    def _get_llm(self) -> object:
+    def _get_llm(self) -> Any:
         """Get configured LLM instance."""
         openai_key = os.getenv("OPENAI_API_KEY")
         anthropic_key = os.getenv("ANTHROPIC_API_KEY")
@@ -104,17 +105,23 @@ class BrowserUseBackend(CrawlBackend):
                         if len(args) == 2:
                             messages, output_format = args
                             if output_format:
-                                kwargs['config'] = {'output_format': output_format}
+                                kwargs["config"] = {"output_format": output_format}
                             return await self._llm.ainvoke(messages, **kwargs)
                         else:
                             return await self._llm.ainvoke(*args, **kwargs)
 
                     def invoke(self, *args: Any, **kwargs: Any) -> Any:
-                        return self._llm.invoke(*args, **kwargs)
+                        # Synchronous version - use ainvoke with asyncio if needed
+                        import asyncio
 
-                return ChatOpenAI(
-                    model="gpt-4o-mini", api_key=openai_key, temperature=0
-                )
+                        try:
+                            loop = asyncio.get_event_loop()
+                        except RuntimeError:
+                            loop = asyncio.new_event_loop()
+                            asyncio.set_event_loop(loop)
+                        return loop.run_until_complete(self.ainvoke(*args, **kwargs))
+
+                return ChatOpenAI(model="gpt-4o-mini", api_key=openai_key, temperature=0)
             except ImportError:
                 pass
 
@@ -145,13 +152,21 @@ class BrowserUseBackend(CrawlBackend):
                         if len(args) == 2:
                             messages, output_format = args
                             if output_format:
-                                kwargs['config'] = {'output_format': output_format}
+                                kwargs["config"] = {"output_format": output_format}
                             return await self._llm.ainvoke(messages, **kwargs)
                         else:
                             return await self._llm.ainvoke(*args, **kwargs)
 
                     def invoke(self, *args: Any, **kwargs: Any) -> Any:
-                        return self._llm.invoke(*args, **kwargs)
+                        # Synchronous version - use ainvoke with asyncio if needed
+                        import asyncio
+
+                        try:
+                            loop = asyncio.get_event_loop()
+                        except RuntimeError:
+                            loop = asyncio.new_event_loop()
+                            asyncio.set_event_loop(loop)
+                        return loop.run_until_complete(self.ainvoke(*args, **kwargs))
 
                 return ChatAnthropic(
                     model="claude-3-haiku-20240307",  # Fast, cost-effective

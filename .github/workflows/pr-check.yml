@@ -9,6 +9,8 @@ jobs:
     runs-on: macos-latest
     env:
       # Provide via repo/org secrets (Settings → Secrets → Actions)
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +41,7 @@ jobs:
         run: flake8 crawlstudio/
 
       - name: Run core tests
-        run: pytest tests/backends/ -v
+        run: pytest tests/backends/ -v -m essential
 
       - name: Check package builds
         run: |

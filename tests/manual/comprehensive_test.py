@@ -22,7 +22,7 @@ async def test_all_formats():
         return
 
     backend = FirecrawlBackend(config)
-    test_url = "https://httpbin.org/html"
+    test_url = "https://example.com/"
 
     # Test 1: Markdown format
     print("\n1. Testing MARKDOWN format...")

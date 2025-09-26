@@ -15,7 +15,7 @@ async def test_scrapy():
 
     try:
         print("Testing basic HTML extraction...")
-        result = await backend.crawl("https://httpbin.org/html", format="html")
+        result = await backend.crawl("https://example.com/", format="html")
         print(f"SUCCESS: {result.backend_used}")
         print(f"Execution time: {result.execution_time:.2f}s")
         print(f"HTML length: {len(result.raw_html) if result.raw_html else 0}")
@@ -24,14 +24,14 @@ async def test_scrapy():
         print("=" * 50)
 
         print("Testing markdown format (should work but no conversion)...")
-        result2 = await backend.crawl("https://httpbin.org/html", format="markdown")
+        result2 = await backend.crawl("https://example.com/", format="markdown")
         print(f"SUCCESS: {result2.backend_used}")
         print(f"HTML length: {len(result2.raw_html) if result2.raw_html else 0}")
         print(f"Markdown: {result2.markdown} (expected None)")
         print("=" * 50)
 
         print("Testing structured extraction...")
-        result3 = await backend.crawl("https://httpbin.org/html", format="structured")
+        result3 = await backend.crawl("https://example.com/", format="structured")
         print(f"SUCCESS: {result3.backend_used}")
         print(f"Structured data: {result3.structured_data}")
         print("=" * 50)
