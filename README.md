@@ -63,10 +63,10 @@ python -m playwright install
 ## 🚀 CLI Usage
 After install, use the CLI to crawl a URL with different backends and formats:
 ```bash
-crawlstudio https://example.com --backend firecrawl --format markdown --print markdown
-crawlstudio https://example.com --backend crawl4ai --format html --print html
-crawlstudio https://example.com --backend scrapy --format structured --print structured
-crawlstudio https://example.com --backend browser-use --format structured --print structured
+crawlstudio https://en.wikipedia.org/wiki/Switzerland --backend firecrawl --format markdown --print markdown
+crawlstudio https://en.wikipedia.org/wiki/Switzerland --backend crawl4ai --format html --print html
+crawlstudio https://en.wikipedia.org/wiki/Switzerland --backend scrapy --format markdown --print markdown
+crawlstudio https://en.wikipedia.org/wiki/Switzerland --backend browser-use --format markdown --print markdown
 ```
 - `--backend`: one of `firecrawl`, `crawl4ai`, `scrapy`, `browser-use`
 - `--format`: one of `markdown`, `html`, `structured`
@@ -83,7 +83,7 @@ from crawlstudio import CrawlConfig, FirecrawlBackend
 async def main():
     config = CrawlConfig()
     backend = FirecrawlBackend(config)
-    result = await backend.crawl("https://example.com", format="markdown")
+    result = await backend.crawl("https://en.wikipedia.org/wiki/Switzerland", format="markdown")
     print(result.markdown)
 
 asyncio.run(main())
@@ -97,7 +97,7 @@ from crawlstudio import CrawlConfig, FirecrawlBackend
 async def main():
     config = CrawlConfig()
     backend = FirecrawlBackend(config)
-    result = await backend.crawl("https://www.bloomberg.com/", format="markdown")
+    result = await backend.crawl("https://en.wikipedia.org/wiki/Switzerland", format="markdown")
     print(result.markdown)
 
 asyncio.run(main())
@@ -111,8 +111,8 @@ from crawlstudio import CrawlConfig, Crawl4AIBackend
 async def main():
     config = CrawlConfig()
     backend = Crawl4AIBackend(config)
-    result = await backend.crawl("https://finance.yahoo.com/", format="structured")
-    print(result.structured_data)  # Outputs title, summary, keywords
+    result = await backend.crawl("https://en.wikipedia.org/wiki/Switzerland", format="markdown")
+    print(result.markdown)  # Outputs title, summary, keywords
 
 asyncio.run(main())
 ```
@@ -125,7 +125,7 @@ from crawlstudio import CrawlConfig, ScrapyBackend
 async def main():
     config = CrawlConfig()
     backend = ScrapyBackend(config)
-    result = await backend.crawl("https://www.bloomberg.com/", format="html")
+    result = await backend.crawl("https://en.wikipedia.org/wiki/Switzerland", format="html")
     print(result.raw_html)
 
 asyncio.run(main())
@@ -139,8 +139,8 @@ from crawlstudio import CrawlConfig, BrowserUseBackend
 async def main():
     config = CrawlConfig()
     backend = BrowserUseBackend(config)
-    result = await backend.crawl("https://example.com", format="structured")
-    print(result.structured_data)  # AI-extracted data
+    result = await backend.crawl("https://en.wikipedia.org/wiki/Switzerland", format="markdown")
+    print(result.markdown)  # AI-extracted data
 
 asyncio.run(main())
 ```
