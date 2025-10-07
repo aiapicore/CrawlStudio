@@ -29,7 +29,7 @@ pip install .[browser-use]
 ## ⚡ Quick Start
 - CLI:
 ```bash
-crawlstudio https://example.com --backend firecrawl --format markdown --print markdown
+crawlstudio https://en.wikipedia.org/wiki/Switzerland --backend firecrawl --format markdown --print markdown
 ```
 - Python:
 ```python
@@ -38,7 +38,7 @@ from crawlstudio import CrawlConfig, FirecrawlBackend
 
 async def main():
     cfg = CrawlConfig()
-    res = await FirecrawlBackend(cfg).crawl("https://example.com", format="markdown")
+    res = await FirecrawlBackend(cfg).crawl("https://en.wikipedia.org/wiki/Switzerland", format="markdown")
     print(res.markdown)
 
 asyncio.run(main())
@@ -75,19 +75,6 @@ crawlstudio https://en.wikipedia.org/wiki/Switzerland --backend browser-use --fo
 ## 📘 Usage Examples (API)
 The library exposes a unified interface; below are end-to-end examples for each backend.
 
-### 🧑‍💻 Python Usage
-```python
-import asyncio
-from crawlstudio import CrawlConfig, FirecrawlBackend
-
-async def main():
-    config = CrawlConfig()
-    backend = FirecrawlBackend(config)
-    result = await backend.crawl("https://en.wikipedia.org/wiki/Switzerland", format="markdown")
-    print(result.markdown)
-
-asyncio.run(main())
-```
 
 ### Firecrawl Example
 ```python
@@ -199,7 +186,7 @@ config = CrawlConfig(
 )
 
 # Recursive crawling with depth control
-result = await backend.crawl_recursive("https://example.com", format="markdown")
+result = await backend.crawl_recursive("https://en.wikipedia.org/wiki/Switzerland", format="markdown")
 print(f"Crawled {len(result.pages)} pages across {result.max_depth_reached} levels")
 ```
 
